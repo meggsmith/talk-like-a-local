@@ -26,16 +26,31 @@ my_env = jinja2.Environment(
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
-        self.response.write('Hello world!')
+        self.response.write('anyone home')
 
 
 class SlangHandler(webapp2.RequestHandler):
     def get(self):
-        slang_template=my_env.get_template("templates/index.html")
+        slang_template=my_env.get_template("templates/location.html")
         self.response.write(slang_template.render())
 
+    def post(self):
+      def slang_finder(location):
+          slang_dictionary = {'Boston':['wicked', 'pissah', 'bubbler', 'chowdah', 'lobstah'],
+          'New York':['fuh-gedd-about-it', 'hipster', 'bodega', 'bridge and tunnel', 'schmear']}  
+          if location == 'Boston':
+            slang_list_for_location = slang_dictionary['Boston']
+          elif location == 'New York':
+            slang_list_for_location = slang_dictionary['New York']
+          return(slang_list_for_location)
 
-    #def post(self):
+      requested_location=self.request.get('location')
+      slang_list=slang_finder(requested_location)
+
+      my_slang_dict={'user_slang':slang_list, 'output_city':requested_location}
+      slang_template=my_env.get_template('templates/output.html')
+      self.response.write(slang_template.render(my_slang_dict))
+  
             
 
 app = webapp2.WSGIApplication([
